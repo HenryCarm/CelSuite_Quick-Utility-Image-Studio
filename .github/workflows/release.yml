@@ -19,7 +19,7 @@ jobs:
           if (Test-Path requirements.txt) { pip install -r requirements.txt }
           pip install nuitka
       - name: Build
-        run: python -m nuitka --onefile --enable-plugin=upx --nofollow-import-to=numpy,opencv-python,cv2,matplotlib,pytest,setuptools,pkg_resources --windows-console-mode=disable --include-data-dir=assets=assets --include-data-files=icon.webp=icon.webp --include-data-files=wallpaper.webp=wallpaper.webp --output-filename=CelSuite_QUIS-${{ github.ref_name }}-Windows.exe --output-dir=dist main.py
+        run: python -m nuitka --onefile --enable-plugin=upx --enable-plugin=pyside6 --assume-yes-for-downloads --nofollow-import-to=matplotlib,pytest,setuptools,pkg_resources --include-package=PIL --include-package=celsuite.tools --windows-console-mode=disable --include-data-dir=assets=assets --include-data-files=icon.webp=icon.webp --include-data-files=wallpaper.webp=wallpaper.webp --output-filename=CelSuite_QUIS-${{ github.ref_name }}-Windows.exe --output-dir=dist main.py
       - uses: softprops/action-gh-release@v2
         with: {files: "dist/*"}
   linux:
@@ -35,7 +35,7 @@ jobs:
           [ -f requirements.txt ] && pip install -r requirements.txt
           pip install nuitka
       - name: Build
-        run: python -m nuitka --onefile --enable-plugin=upx --clang --lto=yes --nofollow-import-to=numpy,opencv-python,cv2,matplotlib,pytest,setuptools,pkg_resources --include-data-dir=assets=assets --include-data-files=icon.webp=icon.webp --include-data-files=wallpaper.webp=wallpaper.webp --output-filename=CelSuite_QUIS-${{ github.ref_name }}-Linux.bin --output-dir=dist main.py
+        run: python -m nuitka --onefile --enable-plugin=upx --enable-plugin=pyside6 --clang --lto=yes --nofollow-import-to=matplotlib,pytest,setuptools,pkg_resources --include-package=PIL --include-package=celsuite.tools --include-data-dir=assets=assets --include-data-files=icon.webp=icon.webp --include-data-files=wallpaper.webp=wallpaper.webp --output-filename=CelSuite_QUIS-${{ github.ref_name }}-Linux.bin --output-dir=dist main.py
       - uses: softprops/action-gh-release@v2
         with: {files: "dist/*"}
   source:
