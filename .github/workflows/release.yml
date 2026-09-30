@@ -13,6 +13,8 @@ jobs:
         with: {python-version: "3.11"}
       - name: Deps
         run: |
+          choco install upx -y
+          upx --version
           python -m pip install --upgrade pip
           if (Test-Path requirements.txt) { pip install -r requirements.txt }
           pip install nuitka
