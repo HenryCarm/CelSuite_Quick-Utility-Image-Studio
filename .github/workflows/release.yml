@@ -1,0 +1,48 @@
+name: release
+on:
+  push:
+    tags: ["v*"]
+permissions:
+  contents: write
+jobs:
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - name: Deps
+        run: |
+          python -m pip install --upgrade pip
+          if (Test-Path requirements.txt) { pip install -r requirements.txt }
+          pip install nuitka
+      - name: Build
+        run: python -m nuitka --onefile --enable-plugin=upx --nofollow-import-to=numpy,opencv-python,cv2,matplotlib,pytest,setuptools,pkg_resources --windows-console-mode=disable --include-data-dir=assets=assets --include-data-files=icon.webp=icon.webp --include-data-files=wallpaper.webp=wallpaper.webp --output-filename=CelSuite_QUIS-${{ github.ref_name }}-Windows.exe --output-dir=dist main.py
+      - uses: softprops/action-gh-release@v2
+        with: {files: "dist/*"}
+  linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - name: Deps
+        run: |
+          sudo apt-get update && sudo apt-get install -y upx patchelf || true
+          python -m pip install --upgrade pip
+          [ -f requirements.txt ] && pip install -r requirements.txt
+          pip install nuitka
+      - name: Build
+        run: python -m nuitka --onefile --enable-plugin=upx --clang --lto=yes --nofollow-import-to=numpy,opencv-python,cv2,matplotlib,pytest,setuptools,pkg_resources --include-data-dir=assets=assets --include-data-files=icon.webp=icon.webp --include-data-files=wallpaper.webp=wallpaper.webp --output-filename=CelSuite_QUIS-${{ github.ref_name }}-Linux.bin --output-dir=dist main.py
+      - uses: softprops/action-gh-release@v2
+        with: {files: "dist/*"}
+  source:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Zip source
+        run: |
+          mkdir -p dist
+          zip -r "dist/CelSuite_QUIS-${GITHUB_REF_NAME}-Source.zip" main.py celsuite assets icon.webp wallpaper.webp requirements.txt README.md
+      - uses: softprops/action-gh-release@v2
+        with: {files: "dist/*"}

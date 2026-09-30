@@ -1,0 +1,9 @@
+__pycache__/
+*.pyc
+venv/
+.venv/
+dist/
+build/
+*.onefile-build/
+*.build/
+*CelSuite Quick Utility Image Studio old v269.zip
