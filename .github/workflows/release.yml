@@ -21,7 +21,7 @@ jobs:
       - name: Build
         run: python -m nuitka --onefile --enable-plugin=upx --enable-plugin=pyside6 --assume-yes-for-downloads --nofollow-import-to=matplotlib,pytest,setuptools,pkg_resources --include-package=PIL --include-package=celsuite.tools --windows-console-mode=disable --include-data-dir=assets=assets --include-data-files=icon.webp=icon.webp --include-data-files=wallpaper.webp=wallpaper.webp --output-filename=CelSuite_QUIS-${{ github.ref_name }}-Windows.exe --output-dir=dist main.py
       - uses: softprops/action-gh-release@v2
-        with: {files: "dist/*"}
+        with: {files: "dist/*", body_path: RELEASE_NOTES.md}
   linux:
     runs-on: ubuntu-latest
     steps:
@@ -37,14 +37,4 @@ jobs:
       - name: Build
         run: python -m nuitka --onefile --enable-plugin=upx --enable-plugin=pyside6 --clang --lto=yes --nofollow-import-to=matplotlib,pytest,setuptools,pkg_resources --include-package=PIL --include-package=celsuite.tools --include-data-dir=assets=assets --include-data-files=icon.webp=icon.webp --include-data-files=wallpaper.webp=wallpaper.webp --output-filename=CelSuite_QUIS-${{ github.ref_name }}-Linux.bin --output-dir=dist main.py
       - uses: softprops/action-gh-release@v2
-        with: {files: "dist/*"}
-  source:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Zip source
-        run: |
-          mkdir -p dist
-          zip -r "dist/CelSuite_QUIS-${GITHUB_REF_NAME}-Source.zip" main.py celsuite assets icon.webp wallpaper.webp requirements.txt README.md
-      - uses: softprops/action-gh-release@v2
-        with: {files: "dist/*"}
+        with: {files: "dist/*", body_path: RELEASE_NOTES.md}
